@@ -1,0 +1,25 @@
+{
+  "title": "MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations",
+  "description": "An open-source scientific toolkit for rigorous quality assurance, automated equilibration detection (t_eq), integrated autocorrelation time (tau_int), effective sample size (N_eff), multi-replica convergence, and manuscript-ready reporting for molecular dynamics simulations.",
+  "creators": [
+    {
+      "name": "Monreal-Hernández, Andre",
+      "affiliation": "Doctoral Research Group"
+    }
+  ],
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "molecular dynamics",
+    "equilibration",
+    "statistical inefficiency",
+    "effective sample size",
+    "convergence",
+    "reproducibility",
+    "GROMACS",
+    "AMBER",
+    "OpenMM",
+    "scientific software"
+  ],
+  "upload_type": "software"
+}

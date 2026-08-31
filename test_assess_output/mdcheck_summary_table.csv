@@ -1,0 +1,2 @@
+Observable,Total Frames,Equilibration Time (t_eq),Discarded (%),Production Frames,tau_int (frames),Inefficiency (g),Effective Samples (N_eff),Production Mean,95% Bootstrap CI,Std Dev,Drift Status,Quality Status
+Backbone,1500,14.11,18.8%,1218,5.8,11.60,105,0.218,"[0.216, 0.220]",0.016,PASS,WARNING
