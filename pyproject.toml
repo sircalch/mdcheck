@@ -66,3 +66,7 @@ Documentation = "https://github.com/amonreal/mdcheck#readme"
 Repository = "https://github.com/amonreal/mdcheck.git"
 "Bug Tracker" = "https://github.com/amonreal/mdcheck/issues"
 Changelog = "https://github.com/amonreal/mdcheck/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["mdcheck*"]
+
