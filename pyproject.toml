@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 readme = "README.md"
 authors = [
-    { name = "Andre Monreal-Hernández", email = "amonreal@example.com" }
+    { name = "Andres Monreal-Hernández", email = "amonreal@example.com" }
 ]
 license = { text = "MIT" }
 keywords = [

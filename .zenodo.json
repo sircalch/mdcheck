@@ -3,7 +3,8 @@
   "description": "An open-source scientific toolkit for rigorous quality assurance, automated equilibration detection (t_eq), integrated autocorrelation time (tau_int), effective sample size (N_eff), multi-replica convergence, and manuscript-ready reporting for molecular dynamics simulations.",
   "creators": [
     {
-      "name": "Monreal-Hernández, Andre",
+      "name": "Monreal-Hernández, Andres",
+      "orcid": "0009-0009-1207-8597",
       "affiliation": "Doctoral Research Group"
     }
   ],

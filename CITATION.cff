@@ -1,9 +1,9 @@
-﻿cff-version: 1.2.0
+cff-version: 1.2.0
 message: "If you use MDCheck in your research to evaluate trajectory convergence, equilibration, statistical inefficiency, or replica reproducibility, please cite it as below."
 authors:
   - family-names: "Monreal-Hernández"
-    given-names: "Andre"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
+    given-names: "Andres"
+    orcid: "https://orcid.org/0009-0009-1207-8597"
 title: "MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 version: 1.0.0
 date-released: 2026-08-31
