@@ -5,14 +5,6 @@ authors:
     given-names: "Andrés"
     orcid: "https://orcid.org/0009-0009-1207-8597"
     affiliation: "Universidad Estatal de Sonora"
-  - family-names: "Franco-Amaya"
-    given-names: "Sara Lizbeth"
-    orcid: "https://orcid.org/0009-0005-0272-0241"
-    affiliation: "Doctorado en Nanotecnología, Universidad de Sonora"
-  - family-names: "Martínez-Osorio"
-    given-names: "Carlos Ivanhoe"
-    orcid: "https://orcid.org/0009-0003-7872-4965"
-    affiliation: "Doctorado en Ciencia de Materiales, Universidad de Sonora"
 title: "MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 version: 1.0.0
 date-released: 2026-08-31

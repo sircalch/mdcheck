@@ -8,9 +8,7 @@ version = "1.0.0"
 description = "Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 readme = "README.md"
 authors = [
-    { name = "Andrés Monreal-Hernández", email = "andres.monreal@ues.mx" },
-    { name = "Sara Lizbeth Franco-Amaya" },
-    { name = "Carlos Ivanhoe Martínez-Osorio" }
+    { name = "Andrés Monreal-Hernández", email = "andres.monreal@ues.mx" }
 ]
 license = { text = "MIT" }
 keywords = [
