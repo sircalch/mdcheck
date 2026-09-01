@@ -1,4 +1,4 @@
-"""
+﻿"""
 Generates manuscript Methods text, Supporting Information LaTeX, summary tables, and BibTeX citations.
 """
 
@@ -98,7 +98,7 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
   year = {2026},
   version = {1.0.0},
   publisher = {Zenodo},
-  url = {https://github.com/amonreal/mdcheck}
+  url = {https://github.com/sircalch/mdcheck}
 }
 """
     with open(bib_path, "w", encoding="utf-8") as f:
@@ -106,3 +106,4 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
     generated["citation_bib"] = bib_path
 
     return generated
+

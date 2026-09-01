@@ -1,4 +1,4 @@
-[build-system]
+﻿[build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
@@ -61,12 +61,13 @@ dev = [
 mdcheck = "mdcheck.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/amonreal/mdcheck"
-Documentation = "https://github.com/amonreal/mdcheck#readme"
-Repository = "https://github.com/amonreal/mdcheck.git"
-"Bug Tracker" = "https://github.com/amonreal/mdcheck/issues"
-Changelog = "https://github.com/amonreal/mdcheck/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/sircalch/mdcheck"
+Documentation = "https://github.com/sircalch/mdcheck#readme"
+Repository = "https://github.com/sircalch/mdcheck.git"
+"Bug Tracker" = "https://github.com/sircalch/mdcheck/issues"
+Changelog = "https://github.com/sircalch/mdcheck/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["mdcheck*"]
+
 

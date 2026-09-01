@@ -1,6 +1,6 @@
-# MDCheck
+﻿# MDCheck
 
-[![CI](https://github.com/amonreal/mdcheck/actions/workflows/test.yml/badge.svg)](https://github.com/amonreal/mdcheck/actions)
+[![CI](https://github.com/sircalch/mdcheck/actions/workflows/test.yml/badge.svg)](https://github.com/sircalch/mdcheck/actions)
 [![PyPI version](https://img.shields.io/pypi/v/mdcheck.svg?color=blue)](https://pypi.org/project/mdcheck/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mdcheck.svg)](https://pypi.org/project/mdcheck/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -58,7 +58,7 @@ pip install mdcheck
 
 ### From Source (Development Mode)
 ```bash
-git clone https://github.com/amonreal/mdcheck.git
+git clone https://github.com/sircalch/mdcheck.git
 cd mdcheck
 pip install -e .[dev]
 ```
@@ -142,7 +142,7 @@ If you use MDCheck to evaluate trajectory convergence, equilibration, statistica
   year = {2026},
   version = {1.0.0},
   publisher = {Zenodo},
-  url = {https://github.com/amonreal/mdcheck}
+  url = {https://github.com/sircalch/mdcheck}
 }
 ```
 
@@ -151,3 +151,4 @@ If you use MDCheck to evaluate trajectory convergence, equilibration, statistica
 ## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+

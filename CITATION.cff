@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+﻿cff-version: 1.2.0
 message: "If you use MDCheck in your research to evaluate trajectory convergence, equilibration, statistical inefficiency, or replica reproducibility, please cite it as below."
 authors:
   - family-names: "Monreal-Hernández"
@@ -7,8 +7,8 @@ authors:
 title: "MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 version: 1.0.0
 date-released: 2026-08-31
-url: "https://github.com/amonreal/mdcheck"
-repository-code: "https://github.com/amonreal/mdcheck"
+url: "https://github.com/sircalch/mdcheck"
+repository-code: "https://github.com/sircalch/mdcheck"
 keywords:
   - "molecular dynamics"
   - "convergence"
@@ -20,3 +20,4 @@ keywords:
   - "amber"
   - "openmm"
 license: MIT
+

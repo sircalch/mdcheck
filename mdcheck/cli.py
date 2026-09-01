@@ -1,4 +1,4 @@
-"""
+﻿"""
 Command Line Interface (CLI) for MDCheck.
 """
 
@@ -197,11 +197,11 @@ def print_citation():
   year = {2026},
   version = {1.0.0},
   publisher = {Zenodo},
-  url = {https://github.com/amonreal/mdcheck}
+  url = {https://github.com/sircalch/mdcheck}
 }"""
     print("\nIf you use MDCheck in your publications, please cite:\n")
     print("APA Style:")
-    print("Monreal-Hernández, A. (2026). MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations (v1.0.0). Zenodo. https://github.com/amonreal/mdcheck\n")
+    print("Monreal-Hernández, A. (2026). MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations (v1.0.0). Zenodo. https://github.com/sircalch/mdcheck\n")
     print("BibTeX:")
     print(bib)
     print()
@@ -251,3 +251,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
