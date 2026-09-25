@@ -70,15 +70,16 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
     replica_sentence = ""
     if report.replica_assessment is not None:
         n_rep = report.replica_assessment["n_replicas"]
-        mean_jsd = report.replica_assessment["mean_jsd"]
+        ra = report.replica_assessment
         replica_sentence = (
-            f" Trajectory reproducibility across {n_rep} independent replicas was confirmed via "
-            f"Jensen-Shannon divergence (mean JSD = {mean_jsd:.3f}, status: {report.replica_assessment['status']})."
+            f" Consistency of the ensemble averages across {n_rep} independent replicas was tested with "
+            f"Cochran's Q on autocorrelation-corrected standard errors "
+            f"(Q = {ra.get('cochran_q', 0.0):.2f}, p = {ra.get('heterogeneity_p_value', 1.0):.3f}; status: {ra['status']})."
         )
         
     methods_text = (
         f"Trajectory convergence, stationarity, and statistical independence were systematically assessed "
-        f"using MDCheck v1.0.0 (Monreal-Hernández, 2026). For all monitored observables ({obs_names}), the initial "
+        f"using MDCheck v1.1.0 (Monreal-Hernández, 2026). For all monitored observables ({obs_names}), the initial "
         f"equilibration phase (up to t_eq = {max_teq:.2f} ns) was automatically detected and discarded by maximizing "
         f"the effective sample size N_eff of the production regime. Integrated autocorrelation times (tau_int) and "
         f"statistical inefficiency factors (g) were evaluated via self-consistent Madras-Sokal windowing, ensuring a minimum "
@@ -96,7 +97,7 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
   author = {Monreal-Hern\\'andez, Andre},
   title = {{MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations}},
   year = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/mdcheck}
 }

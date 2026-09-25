@@ -238,7 +238,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 <div class="card-value">{{ report.key_metrics.n_replicas_evaluated }}</div>
                 <div class="card-subtext">
                     {% if report.replica_assessment %}
-                    JSD: {{ "%.3f"|format(report.replica_assessment.mean_jsd) }} ({{ report.replica_assessment.status }})
+                    Cochran Q p = {{ "%.3f"|format(report.replica_assessment.heterogeneity_p_value if report.replica_assessment.heterogeneity_p_value is defined else 1.0) }} ({{ report.replica_assessment.status }})
                     {% else %}
                     Single trajectory mode
                     {% endif %}
@@ -303,7 +303,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
 
         <footer>
-            Generated automatically by <strong>MDCheck v1.0.0</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
+            Generated automatically by <strong>MDCheck v1.1.0</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
         </footer>
     </div>
 

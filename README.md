@@ -14,13 +14,13 @@
 
 **MDCheck** is an open-source scientific toolkit that solves a universal methodological need in biomolecular and materials simulations: **certifying whether a molecular dynamics trajectory has converged, reached equilibrium, and accumulated sufficient statistically independent observations for publication.**
 
-Instead of manually inspecting plots or guessing equilibration cutoffs, `mdcheck` analyzes raw timeseries (`.xvg`, `.csv`, `.dat`, `.log`) with a single command and delivers:
+Instead of manually inspecting plots or guessing equilibration cutoffs, `mdcheck` analyzes raw timeseries (GROMACS `.xvg`, LAMMPS `log.lammps`, OpenMM/AMBER/NAMD logs, `.csv`, `.dat`) with a single command and delivers:
 
 - 🎯 **Automated Equilibration Detection ($t_{\text{eq}}$)** via statistical inefficiency minimization.
 - ⏱️ **Integrated Autocorrelation Time ($\tau_{\text{int}}$)** & **Statistical Inefficiency ($g$)** using Madras-Sokal self-consistent windowing.
-- 🔢 **Effective Sample Size ($N_{\text{eff}} = N / g$)** to ensure statistically rigorous error estimation.
-- 🔄 **Multi-Replica Reproducibility Matrix ($R_1 \text{ vs } R_2 \text{ vs } R_3$)** based on Jensen-Shannon Divergence (JSD) and Essential Subspace Overlap (RMSIP).
-- 📉 **Linear & CUSUM Systematic Drift Diagnostics** and Flyvbjerg-Petersen block averaging.
+- 🔢 **Effective Sample Size ($N_{\text{eff}} = N / g$)** and a **95% confidence interval of the mean corrected for autocorrelation** ($\bar{x} \pm t_{N_{\text{eff}}-1}\, s\sqrt{g/N}$), validated for nominal coverage on AR(1) processes and OpenMM trajectories (see `validation/`).
+- 🔄 **Multi-Replica Consistency Test**: Cochran's $Q$ heterogeneity test of replica means with autocorrelation-corrected standard errors (calibrated false-alarm rate), plus descriptive Jensen-Shannon, Kolmogorov-Smirnov and Wasserstein distances.
+- 📉 **Linear drift and Geweke stationarity diagnostics** and Flyvbjerg-Petersen block-averaging curves.
 - 🚦 **Quality Certification Badges (`PASS` / `WARNING` / `FAIL`)** with unambiguous diagnostic messages.
 - 📑 **Publication-Ready Outputs**: Interactive self-contained `report.html`, vector plots (SVG/PDF/PNG 300 DPI), LaTeX summary tables (`.tex`), and a draft **Methods & Supporting Information** text snippet with automated **BibTeX citations**.
 
@@ -32,7 +32,7 @@ Instead of manually inspecting plots or guessing equilibration cutoffs, `mdcheck
   │                         MDCheck                           │
   │  ├── Auto Equilibration (max N_eff)                       │
   │  ├── Autocorrelation & Inefficiency (tau_int, g)          │
-  │  ├── Multi-Replica Overlap (Jensen-Shannon, RMSIP)        │
+  │  ├── Multi-Replica Consistency (Cochran Q; JSD/KS/W1)     │
   │  └── Drift Detection & Block Averaging                    │
   └───────────────────────────────────────────────────────────┘
                │
@@ -123,11 +123,14 @@ $$\hat{t}_{\text{eq}} = \arg\max_{t_0} N_{\text{eff}}(t_0) = \arg\max_{t_0} \fra
 ### 2. Autocorrelation & Statistical Inefficiency ($g$)
 MD frames are temporally correlated. MDCheck computes the integrated autocorrelation time $\tau_{\text{int}}$ using the Madras-Sokal self-consistent cutoff window:
 $$\tau_{\text{int}} = \frac{1}{2} + \sum_{k=1}^{M} C(k), \quad M \ge 6 \tau_{\text{int}}$$
-$$g = 1 + 2\tau_{\text{int}}, \quad N_{\text{eff}} = \frac{N_{\text{prod}}}{g}$$
+$$g = 2\tau_{\text{int}} = 1 + 2\sum_{k=1}^{M} C(k), \quad N_{\text{eff}} = \frac{N_{\text{prod}}}{g}$$
 
-### 3. Multi-Replica Conformational Overlap
-Conformational consistency between independent trajectories ($R_1, R_2, R_3$) is evaluated via the square-root of Jensen-Shannon Divergence ($\mathrm{JSD} \in [0, 1]$) and Root-Mean-Square Inner Product (RMSIP) across essential PCA subspaces:
-$$\mathrm{JSD}(P \parallel Q) = \frac{1}{2} D_{\text{KL}}(P \parallel M) + \frac{1}{2} D_{\text{KL}}(Q \parallel M)$$
+The 95% confidence interval of the production mean is $\bar{x} \pm t_{0.975,\,N_{\text{eff}}-1}\, s \sqrt{g / N_{\text{prod}}}$.
+
+### 3. Multi-Replica Consistency
+Replica means $m_i$ with autocorrelation-corrected standard errors $SE_i = s_i\sqrt{g_i/n_i}$ are compared with Cochran's heterogeneity statistic
+$$Q = \sum_i w_i (m_i - \bar{m}_w)^2, \quad w_i = SE_i^{-2}, \quad Q \sim \chi^2_{k-1}$$
+Status is `PASS` for $p \ge 0.05$, `WARNING` for $0.01 \le p < 0.05$ and `FAIL` for $p < 0.01$. Histogram Jensen-Shannon distances are reported as descriptors only: between finite, autocorrelated samples of the same ensemble they are biased upwards (in the OpenMM validation every replica group exceeded the former 0.15 threshold). An RMSIP function for essential-subspace overlap is available in the API (`subspace_overlap_rmsip`).
 
 ---
 

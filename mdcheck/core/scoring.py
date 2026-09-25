@@ -210,7 +210,7 @@ def assess_trajectory_quality(
         recommendations=recommendations,
         provenance={
             "tool": "MDCheck",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "citation": "Monreal-Hernández, A. (2026). MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations."
         }
     )

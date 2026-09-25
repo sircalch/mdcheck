@@ -6,6 +6,7 @@ from typing import List, Dict, Any, Optional
 import numpy as np
 from scipy import stats
 from scipy.spatial.distance import jensenshannon
+from mdcheck.core.autocorrelation import integrated_autocorrelation_time
 
 
 def jensen_shannon_distance(
@@ -104,7 +105,9 @@ def assess_replica_consistency(
     replica_data: List[np.ndarray],
     replica_names: Optional[List[str]] = None,
     jsd_threshold_pass: float = 0.15,
-    jsd_threshold_warn: float = 0.30
+    jsd_threshold_warn: float = 0.30,
+    alpha_warn: float = 0.05,
+    alpha_fail: float = 0.01
 ) -> Dict[str, Any]:
     """
     Evaluates consistency across multiple replica trajectories.
@@ -115,10 +118,20 @@ def assess_replica_consistency(
         List of 1D timeseries (one per replica).
     replica_names : list of str, optional
         Names or identifiers for each replica (e.g. ['R1', 'R2', 'R3']).
-    jsd_threshold_pass : float, default 0.15
-        JSD distance cutoff for PASS status.
-    jsd_threshold_warn : float, default 0.30
-        JSD distance cutoff for WARNING status.
+    jsd_threshold_pass, jsd_threshold_warn : float
+        Descriptive JSD levels reported in 'jsd_flag'. They no longer set the status: histogram
+        JSD between finite, autocorrelated samples of the same ensemble is biased upwards and
+        exceeded 0.15 for every replica group in the OpenMM validation (validation/).
+    alpha_warn, alpha_fail : float
+        Significance levels of the heterogeneity test that sets the status.
+
+    Notes
+    -----
+    Status is set by Cochran's Q test for equality of replica means,
+        Q = sum_i w_i (m_i - m_w)^2,  w_i = 1 / SE_i^2,  SE_i = s_i sqrt(g_i / n_i),
+    which is chi^2 with k - 1 degrees of freedom when all replicas sample the same ensemble,
+    so the false-alarm rate is alpha by construction. KS p-values assume independent samples
+    and are reported for information only.
 
     Returns
     -------
@@ -172,16 +185,42 @@ def assess_replica_consistency(
 
     mean_jsd = float(np.mean(jsd_values))
     max_jsd = float(np.max(jsd_values))
-    
     if max_jsd <= jsd_threshold_pass:
-        status = "PASS"
-        recommendation = "Replicas exhibit high distributional overlap and conformational reproducibility."
+        jsd_flag = "LOW"
     elif max_jsd <= jsd_threshold_warn:
+        jsd_flag = "MODERATE"
+    else:
+        jsd_flag = "HIGH"
+
+    # Heterogeneity of replica means with autocorrelation-corrected standard errors
+    means = np.array([float(np.mean(r)) for r in replica_data])
+    ses = []
+    for r in replica_data:
+        r = np.asarray(r, dtype=np.float64)
+        _, g_r, _ = integrated_autocorrelation_time(r)
+        ses.append(float(np.std(r, ddof=1)) * np.sqrt(g_r / len(r)) if len(r) > 1 else np.inf)
+    ses = np.array(ses)
+    if np.all(np.isfinite(ses)) and np.all(ses > 0):
+        w = 1.0 / ses**2
+        m_w = float(np.sum(w * means) / np.sum(w))
+        q_stat = float(np.sum(w * (means - m_w) ** 2))
+        p_het = float(stats.chi2.sf(q_stat, n_reps - 1))
+        i_squared = float(max(0.0, (q_stat - (n_reps - 1)) / q_stat)) if q_stat > 0 else 0.0
+    else:
+        m_w, q_stat, p_het, i_squared = float(np.mean(means)), 0.0, 1.0, 0.0
+
+    if p_het >= alpha_warn:
+        status = "PASS"
+        recommendation = (f"Replica means are statistically consistent (Cochran Q = {q_stat:.2f}, "
+                          f"p = {p_het:.3f}).")
+    elif p_het >= alpha_fail:
         status = "WARNING"
-        recommendation = "Moderate divergence detected between replicas. Check individual pairwise distributions."
+        recommendation = (f"Replica means differ more than expected from sampling noise (Q = {q_stat:.2f}, "
+                          f"p = {p_het:.3f}). Extend sampling or inspect slow degrees of freedom.")
     else:
         status = "FAIL"
-        recommendation = "Significant divergence between replicas. Simulation has not sampled identical conformational states."
+        recommendation = (f"Replica means are inconsistent (Q = {q_stat:.2f}, p = {p_het:.2g}); replicas "
+                          f"have not converged to the same ensemble average.")
 
     return {
         "n_replicas": n_reps,
@@ -193,5 +232,11 @@ def assess_replica_consistency(
         "wasserstein_distances": pairwise_wasserstein,
         "replica_means": [float(np.mean(r)) for r in replica_data],
         "replica_stds": [float(np.std(r)) for r in replica_data],
+        "replica_standard_errors": ses.tolist(),
+        "weighted_mean": m_w,
+        "cochran_q": q_stat,
+        "heterogeneity_p_value": p_het,
+        "i_squared": i_squared,
+        "jsd_flag": jsd_flag,
         "recommendation": recommendation
     }

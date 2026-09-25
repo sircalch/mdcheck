@@ -114,7 +114,7 @@ def run_demo(output_dir: str = "mdcheck_demo_output"):
     for name, obs in report.observables.items():
         print(f" * {name:20s}: t_eq = {obs.t_eq_time:5.2f} ns | N_eff = {obs.n_eff:6.0f} | Mean = {obs.mean_prod:.3f} [{obs.ci_lower_95:.3f}, {obs.ci_upper_95:.3f}] | Status: {obs.status}")
     if report.replica_assessment:
-        print(f" * Multi-Replica Overlap : Mean JSD = {report.replica_assessment['mean_jsd']:.3f} | Status: {report.replica_assessment['status']}")
+        print(f" * Multi-Replica Consistency : Cochran Q p = {report.replica_assessment.get('heterogeneity_p_value', 1.0):.3f} | Mean JSD = {report.replica_assessment['mean_jsd']:.3f} | Status: {report.replica_assessment['status']}")
     print("="*70)
     print(f"\nAll outputs successfully saved to: {os.path.abspath(output_dir)}/")
     print(f"Open {os.path.abspath(html_path)} in your browser to inspect the full report.\n")
@@ -185,7 +185,7 @@ def run_assess(args):
     for name, obs in report.observables.items():
         print(f" * {name:20s}: t_eq = {obs.t_eq_time:5.2f} | N_eff = {obs.n_eff:6.0f} | Mean = {obs.mean_prod:.3f} [{obs.ci_lower_95:.3f}, {obs.ci_upper_95:.3f}] | Status: {obs.status}")
     if report.replica_assessment:
-        print(f" * Multi-Replica Overlap : Mean JSD = {report.replica_assessment['mean_jsd']:.3f} | Status: {report.replica_assessment['status']}")
+        print(f" * Multi-Replica Consistency : Cochran Q p = {report.replica_assessment.get('heterogeneity_p_value', 1.0):.3f} | Mean JSD = {report.replica_assessment['mean_jsd']:.3f} | Status: {report.replica_assessment['status']}")
     print("="*70)
     print(f"\nReport ready at: {os.path.abspath(html_path)}\n")
 
