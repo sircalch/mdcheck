@@ -10,7 +10,7 @@ from mdcheck.core.autocorrelation import integrated_autocorrelation_time, effect
 from mdcheck.core.equilibration import detect_equilibration, geweke_diagnostic
 from mdcheck.core.replicas import assess_replica_consistency
 from mdcheck.core.drift import assess_drift, block_averaging
-from mdcheck.core.bootstrap import bootstrap_ci
+from mdcheck.core.bootstrap import inefficiency_corrected_ci
 
 
 @dataclass
@@ -108,8 +108,8 @@ def assess_trajectory_quality(
         # 4. Geweke stationarity
         geweke_res = geweke_diagnostic(y_prod)
         
-        # 5. Bootstrap confidence intervals
-        mean_val, ci_low, ci_high = bootstrap_ci(y_prod, stat_func=np.mean)
+        # 5. Confidence interval of the mean corrected for autocorrelation (t distribution on N_eff)
+        mean_val, ci_low, ci_high = inefficiency_corrected_ci(y_prod, g=g)
         std_val = float(np.std(y_prod, ddof=1)) if len(y_prod) > 1 else 0.0
         
         # 6. Scoring rules for this observable

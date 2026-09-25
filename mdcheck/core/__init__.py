@@ -15,7 +15,7 @@ from mdcheck.core.replicas import (
     subspace_overlap_rmsip
 )
 from mdcheck.core.drift import assess_drift, block_averaging
-from mdcheck.core.bootstrap import bootstrap_ci
+from mdcheck.core.bootstrap import bootstrap_ci, inefficiency_corrected_ci
 from mdcheck.core.scoring import assess_trajectory_quality, SimulationQualityReport
 
 __all__ = [
@@ -31,6 +31,7 @@ __all__ = [
     "assess_drift",
     "block_averaging",
     "bootstrap_ci",
+    "inefficiency_corrected_ci",
     "assess_trajectory_quality",
     "SimulationQualityReport"
 ]

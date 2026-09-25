@@ -80,7 +80,7 @@ def generate_publication_figures(
             
         ax_ts.plot(t[t_eq_idx:], y[t_eq_idx:], color="#0066cc", label="Production Phase")
         ax_ts.axhline(obs_rep.mean_prod, color="#003366", linestyle="--", label=f"Mean: {obs_rep.mean_prod:.3f}")
-        ax_ts.fill_between(t[t_eq_idx:], obs_rep.ci_lower_95, obs_rep.ci_upper_95, color="#0066cc", alpha=0.15, label="95% Bootstrap CI")
+        ax_ts.fill_between(t[t_eq_idx:], obs_rep.ci_lower_95, obs_rep.ci_upper_95, color="#0066cc", alpha=0.15, label="95% CI (g-corrected)")
         
         ax_ts.set_xlabel("Time (ns)")
         ax_ts.set_ylabel(f"{obs_name}")

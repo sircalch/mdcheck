@@ -8,11 +8,12 @@ import numpy as np
 import pandas as pd
 from mdcheck.parsers.gromacs import parse_xvg_file
 from mdcheck.parsers.amber_namd import parse_openmm_log, parse_amber_dat
+from mdcheck.parsers.lammps import parse_lammps_log
 
 
 def load_timeseries_file(filepath: str) -> Tuple[np.ndarray, Dict[str, np.ndarray], Dict[str, Any]]:
     """
-    Universally loads a timeseries file with automated format detection (.xvg, .csv, .tsv, .dat, .txt).
+    Universally loads a timeseries file with automated format detection (.xvg, LAMMPS log, OpenMM log, .csv, .tsv, .dat, .txt).
 
     Parameters
     ----------
@@ -44,6 +45,13 @@ def load_timeseries_file(filepath: str) -> Tuple[np.ndarray, Dict[str, np.ndarra
     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
         first_line = f.readline()
         
+    # 2a. LAMMPS log (log.lammps / *.lammps / header "LAMMPS (...)")
+    base = os.path.basename(filepath).lower()
+    if first_line.startswith("LAMMPS (") or base.startswith("log.lammps") or ext in (".lammps", ".log") and "lammps" in base:
+        time_coords, data_matrix, col_names, metadata = parse_lammps_log(filepath)
+        series_dict = {col_names[i]: data_matrix[:, i] for i in range(len(col_names))}
+        return time_coords, series_dict, metadata
+
     if first_line.startswith("#") and ("OpenMM" in first_line or "Potential Energy" in first_line):
         time_coords, data_matrix, col_names, metadata = parse_openmm_log(filepath)
         series_dict = {col_names[i]: data_matrix[:, i] for i in range(len(col_names))}
@@ -53,7 +61,7 @@ def load_timeseries_file(filepath: str) -> Tuple[np.ndarray, Dict[str, np.ndarra
     try:
         df = pd.read_csv(filepath, sep=None, engine='python', comment='#')
     except Exception:
-        df = pd.read_csv(filepath, delim_whitespace=True, comment='#')
+        df = pd.read_csv(filepath, sep=r'\s+', comment='#')
         
     # Strip column names
     df.columns = [str(c).strip() for c in df.columns]

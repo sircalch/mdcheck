@@ -4,6 +4,7 @@ Block bootstrap and non-parametric confidence interval estimation.
 
 from typing import Tuple, Callable, Optional
 import numpy as np
+from scipy.stats import t as student_t
 from mdcheck.core.autocorrelation import integrated_autocorrelation_time
 
 
@@ -29,7 +30,9 @@ def bootstrap_ci(
     confidence_level : float, default 0.95
         Confidence level (e.g. 0.95 for 95% CI).
     block_size : int, optional
-        Block length. If None, automatically determined as int(2 * tau_int + 1).
+        Block length. If None, automatically determined as ceil(2 * tau_int).
+        Note: blocks this short underestimate the variance of the mean for strongly
+        correlated data; prefer inefficiency_corrected_ci for the mean.
     random_state : int, optional
         Random seed for reproducibility.
 
@@ -81,3 +84,44 @@ def bootstrap_ci(
     ci_upper = float(np.percentile(boot_stats, 100.0 * (1.0 - alpha)))
     
     return point_estimate, ci_lower, ci_upper
+
+
+def inefficiency_corrected_ci(
+    series: np.ndarray,
+    g: Optional[float] = None,
+    confidence_level: float = 0.95
+) -> Tuple[float, float, float]:
+    """
+    Confidence interval for the mean of a correlated timeseries using the statistical
+    inefficiency g:  mean +/- t_{N_eff - 1} * s * sqrt(g / N),  with N_eff = N / g.
+
+    On AR(1) benchmarks this interval attains nominal coverage, whereas the moving-block
+    bootstrap with blocks of length ~2*tau_int underestimates the width by ~25% for
+    strongly correlated data (see validation/validate_ar1.py).
+
+    Parameters
+    ----------
+    series : np.ndarray
+        1D timeseries array (production region).
+    g : float, optional
+        Statistical inefficiency. Estimated with the Sokal window if None.
+    confidence_level : float, default 0.95
+
+    Returns
+    -------
+    point_estimate, ci_lower, ci_upper : float
+    """
+    x = np.asarray(series, dtype=np.float64)
+    n = len(x)
+    if n == 0:
+        return 0.0, 0.0, 0.0
+    mean = float(np.mean(x))
+    if n < 2:
+        return mean, mean, mean
+    if g is None:
+        _, g, _ = integrated_autocorrelation_time(x)
+    g = max(1.0, float(g))
+    se = float(np.std(x, ddof=1)) * np.sqrt(g / n)
+    dof = max(1.0, n / g - 1.0)
+    t_crit = float(student_t.ppf(0.5 + confidence_level / 2.0, dof))
+    return mean, mean - t_crit * se, mean + t_crit * se

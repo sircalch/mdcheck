@@ -40,7 +40,7 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
             "Inefficiency (g)": f"{obs.g_inefficiency:.2f}",
             "Effective Samples (N_eff)": f"{obs.n_eff:.0f}",
             "Production Mean": f"{obs.mean_prod:.3f}",
-            "95% Bootstrap CI": f"[{obs.ci_lower_95:.3f}, {obs.ci_upper_95:.3f}]",
+            "95% CI (g-corrected)": f"[{obs.ci_lower_95:.3f}, {obs.ci_upper_95:.3f}]",
             "Std Dev": f"{obs.std_prod:.3f}",
             "Drift Status": obs.drift_status,
             "Quality Status": obs.status
@@ -84,7 +84,7 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
         f"statistical inefficiency factors (g) were evaluated via self-consistent Madras-Sokal windowing, ensuring a minimum "
         f"of N_eff = {min_neff:.0f} statistically uncorrelated conformations in the production ensemble. Stationarity and "
         f"absence of systematic drift were confirmed using Geweke diagnostics and Flyvbjerg-Petersen block averaging.{replica_sentence} "
-        f"Reported values represent production means with 95% moving-block bootstrap confidence intervals."
+        f"Reported values represent production means with 95% confidence intervals from the statistical inefficiency (mean ± t_{{N_eff-1}} s sqrt(g/N))."
     )
     with open(methods_path, "w", encoding="utf-8") as f:
         f.write(methods_text + "\n")

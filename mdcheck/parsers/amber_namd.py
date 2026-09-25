@@ -24,8 +24,22 @@ def parse_amber_dat(filepath: str) -> Tuple[np.ndarray, np.ndarray, List[str], D
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"File not found: {filepath}")
         
-    df = pd.read_csv(filepath, delim_whitespace=True, comment='#')
-    
+    # cpptraj writes its header as a comment line ("#Frame  RMSD ..."): keep it as column names.
+    header = None
+    with open(filepath, "r", encoding="utf-8", errors="ignore") as fh:
+        for line in fh:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            if stripped.startswith("#"):
+                header = stripped.lstrip("#").split()
+                continue
+            break
+    data = np.loadtxt(filepath, comments=["#", "@"], ndmin=2)
+    if header is None or len(header) != data.shape[1]:
+        header = ["Frame"] + [f"col{i}" for i in range(1, data.shape[1])]
+    df = pd.DataFrame(data, columns=header)
+
     time_coords = df.iloc[:, 0].to_numpy(dtype=np.float64)
     data_matrix = df.iloc[:, 1:].to_numpy(dtype=np.float64)
     column_names = list(df.columns[1:])
