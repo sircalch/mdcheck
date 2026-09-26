@@ -1,0 +1,2 @@
+observable,n_replicas,t_eq_ps_mdcheck_median,t_eq_ps_pymbar_median,g_mdcheck_median,g_pymbar_median,coverage_mdcheck,coverage_naive_se,coverage_without_discard,ref_se_over_halfwidth_median,n_groups,replica_false_alarm_rate,max_jsd_median
+potential_energy_kJmol,48,15.25,16.25,4.08253212176857,5.020832538604736,0.875,0.6041666666666666,0.020833333333333332,0.11457368015492761,16,0.0625,0.21333508558388117

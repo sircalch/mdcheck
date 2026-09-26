@@ -1,0 +1,11 @@
+{
+  "mdcheck": "1.1.0",
+  "pymbar": "4.0.3",
+  "pyblock": "unknown",
+  "numpy": "2.5.3",
+  "python": "3.12.10",
+  "seed": 20260924,
+  "reps": 100,
+  "n": 20000,
+  "runtime_s": 3445.9
+}

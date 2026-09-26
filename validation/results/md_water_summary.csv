@@ -1,0 +1,3 @@
+observable,n_replicas,t_eq_ps_mdcheck_median,t_eq_ps_pymbar_median,g_mdcheck_median,g_pymbar_median,coverage_mdcheck,coverage_naive_se,coverage_without_discard,ref_se_over_halfwidth_median,n_groups,replica_false_alarm_rate,max_jsd_median
+density_gcm3,24,5.0,4.0,10.012767848610657,11.974018096923828,0.7916666666666666,0.25,0.7083333333333334,0.09148887789487277,8,0.25,0.27011369317592854
+potential_energy_kJmol,24,5.5,5.300000000000001,9.487748782522107,11.071808815002441,0.6666666666666666,0.125,0.7083333333333334,0.0874600586109936,8,0.375,0.27461829320236

@@ -1,0 +1,31 @@
+{
+  "system": "lj",
+  "platform": "OpenCL",
+  "openmm": "8.6.1",
+  "mdcheck": "1.1.0",
+  "short_ps": 150.0,
+  "long_ps": 1500.0,
+  "ref_discard_ps": 100.0,
+  "sample_interval_ps": 0.25,
+  "n_short": 48,
+  "n_long": 4,
+  "seed": 1234,
+  "reference": {
+    "potential_energy_kJmol": {
+      "mean": -5170.22424625315,
+      "se_between_runs": 0.49696119325792537,
+      "se_g": 0.37163049607420895,
+      "g_mean": 5.3213662012886145
+    }
+  },
+  "runtime_s": 222.9,
+  "config": {
+    "temperature_K": 94.4,
+    "dt_fs": 10.0,
+    "report_steps": 25,
+    "observables": [
+      "potential_energy_kJmol"
+    ],
+    "barostat": false
+  }
+}

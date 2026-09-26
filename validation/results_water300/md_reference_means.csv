@@ -1,0 +1,3 @@
+system,observable,reference_mean,reference_se,n_long_runs,long_run_ps,discard_ps
+water,potential_energy_kJmol,-35472.169947157825,3.7538854840924647,4,1200.0,100.0
+water,density_gcm3,0.9840248991622236,0.00029926289219045705,4,1200.0,100.0
