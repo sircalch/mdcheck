@@ -11,7 +11,7 @@ from mdcheck.core.autocorrelation import integrated_autocorrelation_time
 def detect_equilibration(
     series: np.ndarray,
     time_series: Optional[np.ndarray] = None,
-    step_search: int = 10,
+    step_search: Optional[int] = None,
     c_window: float = 6.0
 ) -> Dict[str, Any]:
     """
@@ -25,8 +25,11 @@ def detect_equilibration(
         1D array of the observable (e.g., RMSD, Energy, Rg).
     time_series : np.ndarray, optional
         Array of corresponding timestamps (e.g. in ns or ps). If None, frame indices are used.
-    step_search : int, default 10
-        Step size between candidate t_0 cutoff points to speed up search.
+    step_search : int, optional
+        Stride of the initial grid of candidate cutoffs. By default max(10, N // 200), so that
+        the cost does not grow with N: the grid is then refined around the best cutoff with
+        strides step/10, step/100, ... down to 1 (about 250 evaluations in total). Pass
+        step_search=10 to reproduce the exhaustive stride-10 search of version 1.0.0.
     c_window : float, default 6.0
         Window parameter for autocorrelation time calculation.
 
@@ -68,48 +71,39 @@ def detect_equilibration(
         
     # Search grid for t_0 (test up to 85% of trajectory)
     max_test_idx = int(0.85 * n)
-    indices = np.arange(0, max_test_idx, max(1, step_search))
-    
-    best_t0_idx = 0
-    best_n_eff = -1.0
-    best_tau = 0.5
-    best_g = 1.0
-    
-    neff_curve = []
-    
-    for idx in indices:
-        y_sub = y[idx:]
-        n_sub = len(y_sub)
-        if n_sub < 10:
-            break
-            
-        tau, g, _ = integrated_autocorrelation_time(y_sub, c_window=c_window)
-        n_eff = float(n_sub) / max(1.0, g)
-        
-        neff_curve.append((int(idx), float(n_eff)))
-        
-        if n_eff > best_n_eff:
-            best_n_eff = n_eff
-            best_t0_idx = idx
-            best_tau = tau
-            best_g = g
+    step = max(1, int(step_search)) if step_search is not None else max(10, n // 200)
 
-    # Refined local search around best_t0_idx if step_search > 1
-    if step_search > 1 and best_t0_idx > 0:
-        local_start = max(0, best_t0_idx - step_search)
-        local_end = min(max_test_idx, best_t0_idx + step_search)
-        for idx in range(local_start, local_end):
+    cache: Dict[int, Any] = {}
+
+    def evaluate(idx: int):
+        if idx not in cache:
             y_sub = y[idx:]
-            n_sub = len(y_sub)
-            if n_sub < 10:
+            tau_i, g_i, _ = integrated_autocorrelation_time(y_sub, c_window=c_window)
+            cache[idx] = (float(len(y_sub)) / max(1.0, g_i), tau_i, g_i)
+        return cache[idx]
+
+    neff_curve = []
+    best_t0_idx, best_n_eff, best_tau, best_g = 0, -1.0, 0.5, 1.0
+    for idx in range(0, max_test_idx, step):
+        if n - idx < 10:
+            break
+        n_eff, tau, g = evaluate(idx)
+        neff_curve.append((int(idx), float(n_eff)))
+        if n_eff > best_n_eff:
+            best_t0_idx, best_n_eff, best_tau, best_g = idx, n_eff, tau, g
+
+    # Hierarchical refinement: stride step/10, step/100, ..., 1 around the current best cutoff
+    while step > 1:
+        new_step = max(1, step // 10)
+        lo = max(0, best_t0_idx - step)
+        hi = min(max_test_idx - 1, best_t0_idx + step)
+        for idx in range(lo, hi + 1, new_step):
+            if n - idx < 10:
                 break
-            tau, g, _ = integrated_autocorrelation_time(y_sub, c_window=c_window)
-            n_eff = float(n_sub) / max(1.0, g)
+            n_eff, tau, g = evaluate(idx)
             if n_eff > best_n_eff:
-                best_n_eff = n_eff
-                best_t0_idx = idx
-                best_tau = tau
-                best_g = g
+                best_t0_idx, best_n_eff, best_tau, best_g = idx, n_eff, tau, g
+        step = new_step
 
     fraction_discarded = float(best_t0_idx) / float(n)
     n_prod = n - best_t0_idx

@@ -38,3 +38,19 @@ def test_geweke_diagnostic():
     gew_drift = geweke_diagnostic(drifting_x)
     assert gew_drift["is_stationary"] is False
     assert abs(gew_drift["z_score"]) > 2.0
+
+
+def test_default_search_matches_exhaustive_grid_and_scales():
+    rng = np.random.default_rng(12)
+    n = 20000
+    x = np.empty(n)
+    x[0] = 0.0
+    e = rng.normal(0.0, np.sqrt(1 - 0.81), n)
+    for i in range(1, n):
+        x[i] = 0.9 * x[i - 1] + e[i]
+    x += 3.0 * np.exp(-np.arange(n) / 1000.0)
+    fast = detect_equilibration(x)
+    exhaustive = detect_equilibration(x, step_search=10)
+    # hierarchical search reaches the same optimum of N_eff to within the local noise
+    assert abs(fast["t_eq_index"] - exhaustive["t_eq_index"]) <= 20
+    assert fast["n_eff"] >= 0.99 * exhaustive["n_eff"]
