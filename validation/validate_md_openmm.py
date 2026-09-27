@@ -100,6 +100,45 @@ def build_water():
                          "start_velocity_K": 200.0}
 
 
+# ----------------------------------------------------------------------------------------------
+# Villin headpiece HP35 (N68H) in explicit TIP3P water (structure shipped with OpenMM, test.pdb)
+# ----------------------------------------------------------------------------------------------
+def build_villin():
+    pdb = app.PDBFile(os.path.join(os.path.dirname(app.__file__), "data", "test.pdb"))
+    ff = app.ForceField("amber14-all.xml", "amber14/tip3p.xml")
+    system = ff.createSystem(pdb.topology, nonbondedMethod=app.PME, nonbondedCutoff=0.9 * unit.nanometer,
+                             constraints=app.HBonds, hydrogenMass=4.0 * unit.amu)
+    system.addForce(mm.MonteCarloBarostat(1.0 * unit.bar, 300.0 * unit.kelvin, 25))
+    pos = np.array(pdb.positions.value_in_unit(unit.nanometer))
+    water_ions = {"HOH", "WAT", "Cl", "CL", "Na", "NA"}
+    ca = [a.index for a in pdb.topology.atoms() if a.name == "CA" and a.residue.name not in water_ions]
+    prot = [a.index for a in pdb.topology.atoms() if a.residue.name not in water_ions]
+    masses = np.array([system.getParticleMass(i).value_in_unit(unit.dalton) for i in prot])
+    return system, pos, {"temperature_K": 300.0, "dt_fs": 4.0, "report_steps": 1250,
+                         "observables": ["rmsd_ca_nm", "rg_protein_nm", "potential_energy_kJmol"],
+                         "barostat": True, "ca_index": ca, "protein_index": prot, "protein_masses": masses}
+
+
+def kabsch_rmsd(x, ref):
+    """RMSD after optimal superposition (Kabsch); x and ref are (n, 3) arrays."""
+    xc = x - x.mean(axis=0)
+    rc = ref - ref.mean(axis=0)
+    h = xc.T @ rc
+    u, _, vt = np.linalg.svd(h)
+    d = np.sign(np.linalg.det(vt.T @ u.T))
+    rot = vt.T @ np.diag([1.0, 1.0, d]) @ u.T
+    return float(np.sqrt(np.mean(np.sum((xc @ rot.T - rc) ** 2, axis=1))))
+
+
+def unwrap_protein(xyz, box):
+    """Make the protein whole by removing jumps between consecutive atoms along the chain."""
+    out = xyz.copy()
+    for i in range(1, len(out)):
+        d = out[i] - out[i - 1]
+        out[i] -= box * np.round(d / box)
+    return out
+
+
 def run_replica(system, pos, cfg, n_samples, seed, platform):
     integ = mm.LangevinMiddleIntegrator(cfg["temperature_K"] * unit.kelvin, 1.0 / unit.picosecond,
                                         cfg["dt_fs"] * unit.femtosecond)
@@ -113,12 +152,27 @@ def run_replica(system, pos, cfg, n_samples, seed, platform):
     mm.LocalEnergyMinimizer.minimize(ctx, maxIterations=200)
     ctx.setVelocitiesToTemperature(cfg.get("start_velocity_K", cfg["temperature_K"]) * unit.kelvin, seed)
     total_mass = sum(system.getParticleMass(i).value_in_unit(unit.dalton) for i in range(system.getNumParticles()))
+    need_pos = "rmsd_ca_nm" in cfg["observables"]
+    if need_pos:
+        st0 = ctx.getState(getPositions=True)
+        box0 = np.diag(st0.getPeriodicBoxVectors(asNumpy=True).value_in_unit(unit.nanometer))
+        prot = np.asarray(cfg["protein_index"])
+        ca_in_prot = np.searchsorted(prot, np.asarray(cfg["ca_index"]))
+        ref_prot = unwrap_protein(st0.getPositions(asNumpy=True).value_in_unit(unit.nanometer)[prot], box0)
+        ref_ca = ref_prot[ca_in_prot]
+        m = np.asarray(cfg["protein_masses"])
 
     out = {k: np.empty(n_samples) for k in cfg["observables"]}
     for i in range(n_samples):
         integ.step(cfg["report_steps"])
-        st = ctx.getState(getEnergy=True)
+        st = ctx.getState(getEnergy=True, getPositions=need_pos)
         out["potential_energy_kJmol"][i] = st.getPotentialEnergy().value_in_unit(unit.kilojoule_per_mole)
+        if need_pos:
+            box = np.diag(st.getPeriodicBoxVectors(asNumpy=True).value_in_unit(unit.nanometer))
+            xp = unwrap_protein(st.getPositions(asNumpy=True).value_in_unit(unit.nanometer)[prot], box)
+            out["rmsd_ca_nm"][i] = kabsch_rmsd(xp[ca_in_prot], ref_ca)
+            com = (m[:, None] * xp).sum(axis=0) / m.sum()
+            out["rg_protein_nm"][i] = float(np.sqrt((m * ((xp - com) ** 2).sum(axis=1)).sum() / m.sum()))
         if "density_gcm3" in out:
             vol_nm3 = st.getPeriodicBoxVolume().value_in_unit(unit.nanometer ** 3)
             out["density_gcm3"][i] = total_mass * 1.66053906660e-3 / vol_nm3  # 1 amu/nm^3 = 1.66054e-3 g/cm^3
@@ -126,9 +180,27 @@ def run_replica(system, pos, cfg, n_samples, seed, platform):
     return out
 
 
+def _checkpoint_path(out_dir, system_name, kind, idx):
+    return os.path.join(out_dir, "checkpoints", f"{system_name}_{kind}_{idx:03d}.npz")
+
+
+def run_or_resume(out_dir, system_name, kind, idx, fn):
+    """Runs one trajectory, or loads it if a checkpoint from an interrupted campaign exists."""
+    path = _checkpoint_path(out_dir, system_name, kind, idx)
+    if os.path.exists(path):
+        d = np.load(path)
+        print(f"  resume: {kind} {idx} loaded from checkpoint", flush=True)
+        return {k: d[k] for k in d.files}
+    o = fn()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    np.savez_compressed(path, **o)
+    print(f"  done: {kind} {idx}", flush=True)
+    return o
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--system", choices=["lj", "water"], default="lj")
+    ap.add_argument("--system", choices=["lj", "water", "villin"], default="lj")
     ap.add_argument("--n-short", type=int, default=24)
     ap.add_argument("--n-long", type=int, default=4)
     ap.add_argument("--short-ps", type=float, default=None)
@@ -139,12 +211,13 @@ def main():
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
-    defaults = {"lj": (150.0, 1500.0, 100.0), "water": (100.0, 600.0, 50.0)}[args.system]
+    defaults = {"lj": (150.0, 1500.0, 100.0), "water": (100.0, 600.0, 50.0),
+                "villin": (2000.0, 15000.0, 2000.0)}[args.system]
     short_ps = args.short_ps or defaults[0]
     long_ps = args.long_ps or defaults[1]
     discard_ps = args.ref_discard_ps or defaults[2]
 
-    system, pos, cfg = (build_lj if args.system == "lj" else build_water)()
+    system, pos, cfg = {"lj": build_lj, "water": build_water, "villin": build_villin}[args.system]()
     platform = pick_platform()
     dt_ps = cfg["dt_fs"] * 1e-3 * cfg["report_steps"]
     n_short = int(round(short_ps / dt_ps))
@@ -156,7 +229,8 @@ def main():
     ref = {k: [] for k in cfg["observables"]}
     raw_long, raw_short = [], []
     for r in range(args.n_long):
-        o = run_replica(system, pos, cfg, n_long, args.seed + 1000 + r, platform)
+        o = run_or_resume(args.out, args.system, "long", r,
+                          lambda: run_replica(system, pos, cfg, n_long, args.seed + 1000 + r, platform))
         raw_long.append(o)
         for k in ref:
             ref[k].append(o[k][n_disc:])
@@ -174,7 +248,8 @@ def main():
     rows = []
     prod_segments = {k: [] for k in cfg["observables"]}
     for r in range(args.n_short):
-        o = run_replica(system, pos, cfg, n_short, args.seed + r, platform)
+        o = run_or_resume(args.out, args.system, "short", r,
+                          lambda: run_replica(system, pos, cfg, n_short, args.seed + r, platform))
         raw_short.append(o)
         for k in cfg["observables"]:
             x = o[k]
@@ -235,7 +310,7 @@ def main():
             "mdcheck": mdcheck.__version__, "short_ps": short_ps, "long_ps": long_ps,
             "ref_discard_ps": discard_ps, "sample_interval_ps": dt_ps, "n_short": args.n_short,
             "n_long": args.n_long, "seed": args.seed, "reference": ref_stats,
-            "runtime_s": round(time.time() - t_start, 1), "config": cfg}
+            "runtime_s": round(time.time() - t_start, 1), "config": {k: v for k, v in cfg.items() if k not in ("ca_index", "protein_index", "protein_masses")}}
     with open(os.path.join(args.out, f"md_{args.system}_meta.json"), "w") as fh:
         json.dump(meta, fh, indent=2)
     print(json.dumps(meta["reference"], indent=2), "\nruntime_s", meta["runtime_s"], "platform", meta["platform"])

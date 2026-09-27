@@ -45,11 +45,15 @@ def covers(x, ref, se_ref, g=None, naive=False):
     return bool(abs(x.mean() - ref) <= student_t.ppf(0.975, dof) * np.hypot(se, se_ref))
 
 
-def analyze(npz_path, extra_ps):
+EXTRA_DISCARD_PS = {"lj": 20.0, "water": 20.0, "villin": 200.0}
+
+
+def analyze(npz_path, extra_ps=None):
     d = np.load(npz_path)
     system = os.path.basename(npz_path).split("_")[1]
     dt = float(d["sample_interval_ps"])
     disc = int(d["ref_discard_samples"])
+    extra_ps = EXTRA_DISCARD_PS.get(system, 20.0) if extra_ps is None else extra_ps
     extra = int(round(extra_ps / dt))
     rows, rep_rows, ref_rows = [], [], []
     for key in [k for k in d.files if k.startswith("short_")]:
@@ -92,10 +96,11 @@ def analyze(npz_path, extra_ps):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default=os.path.join(os.path.dirname(__file__), "results"))
-    ap.add_argument("--extra-discard-ps", type=float, default=20.0)
+    ap.add_argument("--extra-discard-ps", type=float, default=None,
+                    help="extra discard for the conservative variant (default: 20 ps LJ/water, 200 ps villin)")
     args = ap.parse_args()
     parts = [analyze(os.path.join(args.results, f"md_{s}_series.npz"), args.extra_discard_ps)
-             for s in ("lj", "water") if os.path.exists(os.path.join(args.results, f"md_{s}_series.npz"))]
+             for s in ("lj", "water", "villin") if os.path.exists(os.path.join(args.results, f"md_{s}_series.npz"))]
     df = pd.concat([p[0] for p in parts], ignore_index=True)
     rep = pd.concat([p[1] for p in parts], ignore_index=True)
     refs = pd.concat([p[2] for p in parts], ignore_index=True)

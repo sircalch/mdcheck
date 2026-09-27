@@ -36,6 +36,8 @@ DATASETS = [
     ("TIP3P U (100 ps)", os.path.join(HERE, "results", "md_water_series.npz"), "potential_energy_kJmol"),
     ("TIP3P rho (300 ps)", os.path.join(HERE, "results_water300", "md_water_series.npz"), "density_gcm3"),
     ("TIP3P U (300 ps)", os.path.join(HERE, "results_water300", "md_water_series.npz"), "potential_energy_kJmol"),
+    ("Villin RMSD (2 ns)", os.path.join(HERE, "results_villin", "md_villin_series.npz"), "rmsd_ca_nm"),
+    ("Villin Rg (2 ns)", os.path.join(HERE, "results_villin", "md_villin_series.npz"), "rg_protein_nm"),
 ]
 
 
@@ -70,6 +72,8 @@ def main():
     rng = np.random.default_rng(args.seed)
     rows = []
     for label, path, obs in DATASETS:
+        if not os.path.exists(path):
+            continue
         prods, ses = productions(path, obs)
         n = len(prods)
         for _ in range(args.triples):

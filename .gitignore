@@ -64,3 +64,4 @@ venv.bak/
 mdcheck_output/
 demo_output/
 *.log
+validation/*/checkpoints/

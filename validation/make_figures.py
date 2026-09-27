@@ -144,18 +144,19 @@ def fig_length_and_trace(res, out):
 
 def fig_md(out):
     frames = []
-    for sub in ("results", "results_water300"):
+    for sub in ("results", "results_water300", "results_villin"):
         p = os.path.join(HERE, sub, "md_final_summary.csv")
         if os.path.exists(p):
             part = pd.read_csv(p)
             part["is300"] = sub.endswith("300")
             frames.append(part)
     d = pd.concat(frames, ignore_index=True)
-    names = {"potential_energy_kJmol": "$U$", "density_gcm3": r"$\rho$"}
+    names = {"potential_energy_kJmol": "$U$", "density_gcm3": r"$\rho$", "rmsd_ca_nm": "RMSD", "rg_protein_nm": "$R_g$"}
+    d = d[~((d.system == "villin") & (d.observable == "potential_energy_kJmol"))].reset_index(drop=True)
     labels = []
     for r in d.itertuples():
-        sysname = "LJ" if r.system == "lj" else "TIP3P"
-        length = "150 ps" if r.system == "lj" else ("300 ps" if r.is300 else "100 ps")
+        sysname = {"lj": "LJ", "water": "TIP3P", "villin": "Villin"}[r.system]
+        length = {"lj": "150 ps", "villin": "2 ns"}.get(r.system, "300 ps" if r.is300 else "100 ps")
         labels.append(f"{sysname} {names[r.observable]}\n{length}")
     rt = pd.read_csv(os.path.join(HERE, "results", "replica_tests_summary.csv"))
 
@@ -164,7 +165,7 @@ def fig_md(out):
     w = 0.27
     for off, key, col, lab in ((-w, "naive", "coverage_naive", "naive SE"),
                                (0, "mdcheck", "coverage_mdcheck", "MDCheck"),
-                               (w, "pyblock", "coverage_extra_discard", "MDCheck + 20 ps discard")):
+                               (w, "pyblock", "coverage_extra_discard", "MDCheck + extra discard")):
         a.bar(x + off, d[col], w * 0.92, color=STYLE[key][0], label=lab, zorder=2)
     for xi, n in zip(x, d.n_replicas):
         band = 1.96 * np.sqrt(0.95 * 0.05 / n)

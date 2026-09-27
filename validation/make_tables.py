@@ -98,10 +98,12 @@ def table_estimators(res, out):
 
 def table_replica_tests(res, out):
     s = pd.read_csv(os.path.join(res, "replica_tests_summary.csv"))
-    order = ["LJ U (150 ps)", "TIP3P rho (100 ps)", "TIP3P U (100 ps)", "TIP3P rho (300 ps)", "TIP3P U (300 ps)"]
+    order = [d for d in ["LJ U (150 ps)", "TIP3P rho (100 ps)", "TIP3P U (100 ps)", "TIP3P rho (300 ps)",
+                         "TIP3P U (300 ps)", "Villin RMSD (2 ns)", "Villin Rg (2 ns)"] if d in set(s.dataset)]
     names = {"LJ U (150 ps)": "LJ $U$ (150 ps)", "TIP3P rho (100 ps)": r"TIP3P $\rho$ (100 ps)",
              "TIP3P U (100 ps)": "TIP3P $U$ (100 ps)", "TIP3P rho (300 ps)": r"TIP3P $\rho$ (300 ps)",
-             "TIP3P U (300 ps)": "TIP3P $U$ (300 ps)"}
+             "TIP3P U (300 ps)": "TIP3P $U$ (300 ps)", "Villin RMSD (2 ns)": r"Villin C$\alpha$ RMSD (2 ns)",
+             "Villin Rg (2 ns)": r"Villin $R_g$ (2 ns)"}
     lines = [r"\begin{tabular}{lrrrrrrr}", r"\toprule",
              r" & \multicolumn{3}{c}{no shift (false alarms)} & \multicolumn{2}{c}{3 SE shift} & \multicolumn{2}{c}{6 SE shift} \\",
              r"\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}",
@@ -161,11 +163,13 @@ def main():
     table_replica_tests(res, args.out)
     table_length(res, args.out)
     table_runtime(res, args.out)
-    obs = {"potential_energy_kJmol": "$U$", "density_gcm3": r"$\rho$"}
+    obs = {"potential_energy_kJmol": "$U$", "density_gcm3": r"$\rho$", "rmsd_ca_nm": r"C$\alpha$ RMSD",
+           "rg_protein_nm": "$R_g$"}
     table_md(args.out, [
         (lambda r: f"{'LJ' if r.system == 'lj' else 'TIP3P'} {obs[r.observable]} "
                    f"({'150' if r.system == 'lj' else '100'} ps)", res),
         (lambda r: f"TIP3P {obs[r.observable]} (300 ps)", os.path.join(HERE, "results_water300")),
+        (lambda r: f"Villin {obs[r.observable]} (2 ns)", os.path.join(HERE, "results_villin")),
     ])
     print("tables written to", args.out)
 
