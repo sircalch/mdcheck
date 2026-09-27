@@ -7,6 +7,7 @@ authors:
     affiliation: "Universidad Estatal de Sonora"
 title: "MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations"
 version: 1.1.0
+doi: 10.5281/zenodo.22217568
 date-released: 2026-09-24
 url: "https://github.com/sircalch/mdcheck"
 repository-code: "https://github.com/sircalch/mdcheck"

@@ -4,7 +4,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/mdcheck.svg?color=blue)](https://pypi.org/project/mdcheck/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mdcheck.svg)](https://pypi.org/project/mdcheck/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1234567.svg)](https://doi.org/10.5281/zenodo.1234567)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22217568.svg)](https://doi.org/10.5281/zenodo.22217568)
 
 > **Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations.**
 
