@@ -157,7 +157,7 @@ def fig_md(out):
     for r in d.itertuples():
         sysname = {"lj": "LJ", "water": "TIP3P", "villin": "Villin"}[r.system]
         length = {"lj": "150 ps", "villin": "2 ns"}.get(r.system, "300 ps" if r.is300 else "100 ps")
-        labels.append(f"{sysname} {names[r.observable]}\n{length}")
+        labels.append(f"{sysname}\n{names[r.observable]}\n{length}")
     rt = pd.read_csv(os.path.join(HERE, "results", "replica_tests_summary.csv"))
 
     fig, (a, b) = plt.subplots(1, 2, figsize=(DOUBLE, 66 * MM), gridspec_kw={"width_ratios": [1.25, 1]})
@@ -185,12 +185,12 @@ def fig_md(out):
             c, m, _ = STYLE[key]
             b.plot(g.shift_se, g[col], color=c, marker=m, ls=ls, lw=1.0, ms=3.5)
     b.axhline(0.05, color=INK2, lw=0.6, ls=":")
-    b.text(6.1, 0.05, "5%", fontsize=6, color=INK2, va="center")
+    b.text(2.5, 0.07, "5%", fontsize=6, color=INK2, va="bottom", ha="center")
     handles = [Line2D([], [], color=STYLE[k][0], marker=STYLE[k][1], lw=1.0, ms=3.5, label=lab) for k, _, lab in tests]
     handles += [Line2D([], [], color=INK2, ls="-", lw=1.0, label="LJ $U$, 150 ps"),
                 Line2D([], [], color=INK2, ls="--", lw=1.0, label="TIP3P $U$, 300 ps")]
-    b.legend(handles=handles, loc="upper left", ncol=1, fontsize=6, handlelength=2.2,
-             bbox_to_anchor=(0.0, 1.0))
+    b.legend(handles=handles, loc="lower right", ncol=1, fontsize=6, handlelength=2.2,
+             bbox_to_anchor=(1.0, 0.1))
     b.set(xlabel="shift of one replica (standard errors)", ylabel="alarm rate", ylim=(-0.02, 1.02),
           xlim=(-0.3, 6.5))
     panel(b, "b")

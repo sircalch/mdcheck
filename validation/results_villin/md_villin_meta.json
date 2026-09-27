@@ -1,0 +1,45 @@
+{
+  "system": "villin",
+  "platform": "OpenCL",
+  "openmm": "8.6.1",
+  "mdcheck": "1.1.0",
+  "short_ps": 2000.0,
+  "long_ps": 15000.0,
+  "ref_discard_ps": 2000.0,
+  "sample_interval_ps": 5.0,
+  "n_short": 24,
+  "n_long": 4,
+  "seed": 1234,
+  "reference": {
+    "rmsd_ca_nm": {
+      "mean": 0.142821536500453,
+      "se_between_runs": 0.009162758566578659,
+      "se_g": 0.0038269519698826263,
+      "g_mean": 101.48450532403324
+    },
+    "rg_protein_nm": {
+      "mean": 0.9565944903973539,
+      "se_between_runs": 0.0038259810367237555,
+      "se_g": 0.001603659409702096,
+      "g_mean": 117.00238665453912
+    },
+    "potential_energy_kJmol": {
+      "mean": -115252.2506458528,
+      "se_between_runs": 4.74895973080841,
+      "se_g": 3.720099849851894,
+      "g_mean": 1.187504268555847
+    }
+  },
+  "runtime_s": 50763.7,
+  "config": {
+    "temperature_K": 300.0,
+    "dt_fs": 4.0,
+    "report_steps": 1250,
+    "observables": [
+      "rmsd_ca_nm",
+      "rg_protein_nm",
+      "potential_energy_kJmol"
+    ],
+    "barostat": true
+  }
+}

@@ -66,7 +66,7 @@ def table_md(out, sources):
         r"System & $n$ & $t_{\mathrm{eq}}$ (ps) & $g$ & $N_{\mathrm{eff}}$ & "
         r"\multicolumn{3}{c}{coverage} & no-discard & \multicolumn{2}{c}{replica alarm rate} \\",
         r"\cmidrule(lr){6-8}\cmidrule(lr){10-11}",
-        r" & & MDCheck / pymbar & & & naive & MDCheck & +20 ps & bias (SE) & $Q$ test & JSD $>0.15$ \\",
+        r" & & MDCheck / pymbar & & & naive & MDCheck & extra discard & bias (SE) & $Q$ test & JSD $>0.15$ \\",
         r"\midrule",
     ]
     for r in d.itertuples():
@@ -105,7 +105,7 @@ def table_replica_tests(res, out):
              "TIP3P U (300 ps)": "TIP3P $U$ (300 ps)", "Villin RMSD (2 ns)": r"Villin C$\alpha$ RMSD (2 ns)",
              "Villin Rg (2 ns)": r"Villin $R_g$ (2 ns)"}
     lines = [r"\begin{tabular}{lrrrrrrr}", r"\toprule",
-             r" & \multicolumn{3}{c}{no shift (false alarms)} & \multicolumn{2}{c}{3 SE shift} & \multicolumn{2}{c}{6 SE shift} \\",
+             r" & \multicolumn{3}{c}{no injected shift} & \multicolumn{2}{c}{3 SE shift} & \multicolumn{2}{c}{6 SE shift} \\",
              r"\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}",
              r"Data & $Q$ test & $\hat{R}>1.01$ & JSD$>0.15$ & $Q$ test & $\hat{R}>1.01$ & $Q$ test & $\hat{R}>1.1$ \\",
              r"\midrule"]

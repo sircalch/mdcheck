@@ -1,0 +1,4 @@
+system,observable,reference_mean,reference_se,n_long_runs,long_run_ps,discard_ps
+villin,rmsd_ca_nm,0.142821536500453,0.009162758566578659,4,15000.0,2000.0
+villin,rg_protein_nm,0.9565944903973539,0.0038259810367237555,4,15000.0,2000.0
+villin,potential_energy_kJmol,-115252.2506458528,4.74895973080841,4,15000.0,2000.0
