@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 
+import numpy as np
 import pandas as pd
 
 HERE = os.path.dirname(__file__)
@@ -95,6 +96,59 @@ def table_estimators(res, out):
     open(os.path.join(out, "table_estimators.tex"), "w").write("\n".join(lines) + "\n")
 
 
+def table_replica_tests(res, out):
+    s = pd.read_csv(os.path.join(res, "replica_tests_summary.csv"))
+    order = ["LJ U (150 ps)", "TIP3P rho (100 ps)", "TIP3P U (100 ps)", "TIP3P rho (300 ps)", "TIP3P U (300 ps)"]
+    names = {"LJ U (150 ps)": "LJ $U$ (150 ps)", "TIP3P rho (100 ps)": r"TIP3P $\rho$ (100 ps)",
+             "TIP3P U (100 ps)": "TIP3P $U$ (100 ps)", "TIP3P rho (300 ps)": r"TIP3P $\rho$ (300 ps)",
+             "TIP3P U (300 ps)": "TIP3P $U$ (300 ps)"}
+    lines = [r"\begin{tabular}{lrrrrrrr}", r"\toprule",
+             r" & \multicolumn{3}{c}{no shift (false alarms)} & \multicolumn{2}{c}{3 SE shift} & \multicolumn{2}{c}{6 SE shift} \\",
+             r"\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}",
+             r"Data & $Q$ test & $\hat{R}>1.01$ & JSD$>0.15$ & $Q$ test & $\hat{R}>1.01$ & $Q$ test & $\hat{R}>1.1$ \\",
+             r"\midrule"]
+    for ds in order:
+        g = s[s.dataset == ds].set_index("shift_se")
+        lines.append(f"{names[ds]} & {g.loc[0, 'q_test']:.2f} & {g.loc[0, 'rhat_gt_1_01']:.2f} & "
+                     f"{g.loc[0, 'jsd_gt_0_15']:.2f} & {g.loc[3, 'q_test']:.2f} & {g.loc[3, 'rhat_gt_1_01']:.2f} & "
+                     f"{g.loc[6, 'q_test']:.2f} & {g.loc[6, 'rhat_gt_1_1']:.2f} " + r"\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    open(os.path.join(out, "table_replica_tests.tex"), "w").write("\n".join(lines) + "\n")
+
+
+def table_length(res, out):
+    s = pd.read_csv(os.path.join(res, "ar1_length_coverage.csv"))
+    lines = [r"\begin{tabular}{rrrrrrrr}", r"\toprule",
+             r"$\phi$ & $N$ & $N/g$ & median $\hat g$ & naive & $z$, $c=6$ & $t$, $c=6$ & $t$, $c=4$ / $c=8$ \\",
+             r"\midrule"]
+    for r in s.itertuples():
+        lines.append(f"{r.phi:g} & {r.n} & {r.neff_true:.0f} & {r.g_c6_median:.1f} & {r.naive:.2f} & {r.z_c6:.2f} & "
+                     f"{r.t_c6:.2f} & {r.t_c4:.2f} / {r.t_c8:.2f} " + r"\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    open(os.path.join(out, "table_length.tex"), "w").write("\n".join(lines) + "\n")
+
+
+def table_runtime(res, out):
+    p = os.path.join(res, "runtime_benchmark.csv")
+    if not os.path.exists(p):
+        return
+    s = pd.read_csv(p)
+
+    def cell(t, t0):
+        return "--" if pd.isna(t) else f"{t:.2f} ({int(t0)})"
+
+    lines = [r"\begin{tabular}{rrrrr}", r"\toprule",
+             r"$N$ & MDCheck 1.1 & MDCheck 1.0 grid & pymbar & pymbar \texttt{fast} \\",
+             r" & s ($t_{\mathrm{eq}}$) & s ($t_{\mathrm{eq}}$) & s ($t_{\mathrm{eq}}$) & s ($t_{\mathrm{eq}}$) \\",
+             r"\midrule"]
+    for _, r in s.iterrows():
+        lines.append(f"{int(r['n']):,} & {cell(r['mdcheck_s'], r['mdcheck_t0'])} & "
+                     f"{cell(r.get('mdcheck10_grid_s', np.nan), r.get('mdcheck10_grid_t0', np.nan))} & "
+                     f"{cell(r.get('pymbar_s', np.nan), r.get('pymbar_t0', np.nan))} & "
+                     f"{cell(r['pymbar_fast_s'], r['pymbar_fast_t0'])} " + r"\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    open(os.path.join(out, "table_runtime.tex"), "w").write("\n".join(lines) + "\n")
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=os.path.join(HERE, "tables"))
@@ -104,6 +158,9 @@ def main():
     table_ar1(res, args.out)
     table_eq(res, args.out)
     table_estimators(res, args.out)
+    table_replica_tests(res, args.out)
+    table_length(res, args.out)
+    table_runtime(res, args.out)
     obs = {"potential_energy_kJmol": "$U$", "density_gcm3": r"$\rho$"}
     table_md(args.out, [
         (lambda r: f"{'LJ' if r.system == 'lj' else 'TIP3P'} {obs[r.observable]} "

@@ -134,6 +134,26 @@ Status is `PASS` for $p \ge 0.05$, `WARNING` for $0.01 \le p < 0.05$ and `FAIL` 
 
 ---
 
+## Validation
+
+`validation/` reproduces a benchmark against pymbar 4.0.3, pyblock and ArviZ on two kinds of data: AR(1) processes,
+where g and the mean are known exactly, and 108 OpenMM trajectories of Lennard-Jones argon and TIP3P water
+(see `validation/README.md`).
+
+| Check | Result |
+|---|---|
+| Statistical inefficiency, g = 1–199 | matches the exact value and pymbar |
+| 95% CI coverage, AR(1) | 0.90–0.99 (naive s/√N: 0.09–0.97; 1.0.0 bootstrap: 0.82–0.90) |
+| Coverage vs. effective sample size | nominal for N_eff ≳ 50; 0.87–0.93 below |
+| Equilibration time vs. pymbar | median difference 1–2 samples |
+| Coverage on OpenMM replicas | LJ 0.90; TIP3P 0.71–0.79 (100 ps) and 0.92–0.96 (300 ps) |
+| Replica test, false alarms (LJ, 300 ps water) | Cochran Q 3–15%; R̂ > 1.01 19–47%; JSD > 0.15 (1.0.0) 29–100% |
+| Replica test, shift of 6 SE | Cochran Q detects 98–99% |
+
+The one case below nominal coverage, 100 ps water replicas, happens because short runs underestimate g. Every
+estimator that uses only the series itself shares this limitation, and the replica test flags these cases. The
+changes made in response to the validation are listed in `CHANGELOG.md`.
+
 ## Citation
 
 If you use MDCheck to evaluate trajectory convergence, equilibration, statistical inefficiency, or replica reproducibility in your research, please cite:
