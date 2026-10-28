@@ -10,7 +10,7 @@ readme = "README.md"
 authors = [
     { name = "Andrés Monreal-Hernández", email = "andres.monreal@ues.mx" }
 ]
-license = { text = "MIT" }
+license = "MIT"
 keywords = [
     "molecular-dynamics",
     "gromacs",
@@ -30,7 +30,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",

@@ -160,11 +160,12 @@ If you use MDCheck to evaluate trajectory convergence, equilibration, statistica
 
 ```bibtex
 @software{monreal2026mdcheck,
-  author = {Monreal-Hern{\'a}ndez, Andre},
+  author = {Monreal-Hern{\'a}ndez, Andr{\'e}s},
   title = {{MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations}},
   year = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   publisher = {Zenodo},
+  doi = {10.5281/zenodo.22217568},
   url = {https://github.com/sircalch/mdcheck}
 }
 ```

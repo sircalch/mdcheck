@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 (unreleased)
+## 1.1.0 (2026-10-27)
 
 Changes prompted by the validation in `validation/`, which compares MDCheck with pymbar 4.0.3, pyblock and
 ArviZ on AR(1) processes with known answers and on OpenMM simulations of Lennard-Jones argon and TIP3P water.
@@ -23,7 +23,7 @@ ArviZ on AR(1) processes with known answers and on OpenMM simulations of Lennard
 ### Added
 - LAMMPS `log.lammps` parser (`parse_lammps_log`), which merges consecutive thermo blocks and is detected
   automatically.
-- A reproducible validation suite in `validation/`: scripts, raw MD time series, results, tables and figures.
+- A reproducible validation suite in `validation/`: scripts, raw MD time series, results, tables and figures, including a solvated villin headpiece campaign (24 x 2 ns replicas, 4 x 15 ns references) with slowly relaxing observables.
 
 ### Changed
 - `detect_equilibration` searches a grid of stride `max(10, N // 200)` and refines it hierarchically down to

@@ -5,7 +5,7 @@
     {
       "name": "Monreal-Hernández, Andrés",
       "orcid": "0009-0009-1207-8597",
-      "affiliation": "Universidad Estatal de Sonora"
+      "affiliation": "Department of Biomedical Engineering, Universidad Estatal de Sonora"
     }
   ],
   "access_right": "open",
@@ -22,5 +22,6 @@
     "OpenMM",
     "scientific software"
   ],
-  "upload_type": "software"
+  "upload_type": "software",
+  "version": "1.1.0"
 }
