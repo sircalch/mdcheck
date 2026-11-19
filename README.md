@@ -170,6 +170,13 @@ If you use MDCheck to evaluate trajectory convergence, equilibration, statistica
 }
 ```
 
+The DOI above always resolves to the latest archived version. The repository's [`CITATION.cff`](CITATION.cff) is the canonical citation record; GitHub's "Cite this repository" button uses it.
+
+### Project page
+
+Release record and related tools: [mdcheck on the author's site](https://sircalch.github.io/software/mdcheck/) · [quality-control and reproducibility family](https://sircalch.github.io/software/quality-control/).
+
+
 ---
 
 ## License
