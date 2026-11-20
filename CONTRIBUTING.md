@@ -26,6 +26,13 @@ The test suite runs in CI on Linux, Windows and macOS with several Python versio
 ## Reporting bugs and asking questions
 Use the issue templates. For security problems, do **not** open a public issue; see `SECURITY.md`.
 
+## Support and governance
+
+- **Getting help.** Ask questions and report bugs in the [issue tracker](https://github.com/sircalch/mdcheck/issues). Include the MDCheck version (`mdcheck --version`), the command or code you ran, the full error message and, when possible, a small input file that reproduces the problem.
+- **What to expect.** MDCheck is maintained by one person alongside research and teaching. Issues and pull requests are answered on a best-effort basis; the aim is to acknowledge new reports within two weeks. Security problems follow `SECURITY.md`.
+- **How decisions are made.** The maintainer, Andrés Monreal Hernández ([@sircalch](https://github.com/sircalch)), reviews and merges changes. Changes that alter a scientific result, a default threshold or the meaning of a status are discussed in an issue first and are documented in `CHANGELOG.md` and in the [documentation](https://sircalch.github.io/mdcheck/).
+- **Becoming a maintainer.** Regular contributors who have had several pull requests merged may be invited to help maintain the project.
+
 ## Citing
 If you use MDCheck in your work, please cite it using `CITATION.cff` (GitHub shows a "Cite this repository" button).
 

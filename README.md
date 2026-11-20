@@ -154,6 +154,14 @@ The one case below nominal coverage, 100 ps water replicas, happens because shor
 estimator that uses only the series itself shares this limitation, and the replica test flags these cases. The
 changes made in response to the validation are listed in `CHANGELOG.md`.
 
+## Documentation and help
+
+- Full documentation, tutorials and API reference: <https://sircalch.github.io/mdcheck/>
+- Questions and bug reports: [issue tracker](https://github.com/sircalch/mdcheck/issues)
+- Support, contribution and governance: [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · [`SECURITY.md`](SECURITY.md)
+
+---
+
 ## Citation
 
 If you use MDCheck to evaluate trajectory convergence, equilibration, statistical inefficiency, or replica reproducibility in your research, please cite:
