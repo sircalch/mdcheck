@@ -171,7 +171,7 @@ If you use MDCheck to evaluate trajectory convergence, equilibration, statistica
   author = {Monreal-Hernández, Andrés},
   title = {{MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations}},
   year = {2026},
-  version = {1.2.1},
+  version = {1.2.2},
   publisher = {Zenodo},
   doi = {10.5281/zenodo.22217568},
   url = {https://github.com/sircalch/mdcheck}

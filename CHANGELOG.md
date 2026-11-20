@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 (2026-11-20)
+
+### Changed
+- Release made to trigger automatic Zenodo archiving (GitHub integration) so that this version receives its own citable DOI. No functional changes.
+
 ## 1.2.1 (2026-11-20)
 
 ### Fixed

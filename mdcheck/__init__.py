@@ -3,7 +3,7 @@ MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility
 Assessment for Molecular Dynamics Simulations.
 """
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 __author__ = "Andrés Monreal-Hernández"
 __license__ = "MIT"
 
