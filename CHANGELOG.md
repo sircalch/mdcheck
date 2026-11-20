@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 (2026-11-19)
 
 ### Added
 - Documentation site with tutorials, an explanation of every check, validation results and API reference: <https://sircalch.github.io/mdcheck/>.

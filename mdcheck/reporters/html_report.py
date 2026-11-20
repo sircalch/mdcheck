@@ -303,7 +303,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
 
         <footer>
-            Generated automatically by <strong>MDCheck v1.1.0</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
+            Generated automatically by <strong>MDCheck v1.2.0</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
         </footer>
     </div>
 
