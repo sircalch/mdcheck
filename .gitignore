@@ -65,3 +65,5 @@ mdcheck_output/
 demo_output/
 *.log
 validation/*/checkpoints/
+# MkDocs build output
+site/

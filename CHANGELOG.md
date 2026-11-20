@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Documentation site with tutorials, an explanation of every check, validation results and API reference: <https://sircalch.github.io/mdcheck/>.
+- Worked example `examples/replicas_to_report.py` (from a CSV file with three replicas of the radius of gyration to a full report), with a walkthrough in the documentation.
+- Support and governance statement in `CONTRIBUTING.md`, linked from the README and the documentation.
+
 ## 1.1.0 (2026-10-27)
 
 Changes prompted by the validation in `validation/`, which compares MDCheck with pymbar 4.0.3, pyblock and

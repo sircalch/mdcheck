@@ -1,0 +1,67 @@
+site_name: MDCheck
+site_description: Convergence, equilibration and statistical-inefficiency checks for molecular dynamics simulations.
+site_url: https://sircalch.github.io/mdcheck/
+repo_url: https://github.com/sircalch/mdcheck
+repo_name: sircalch/mdcheck
+edit_uri: edit/master/docs/
+copyright: Copyright &copy; 2026 Andrés Monreal Hernández · MIT License
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_source: false
+            show_root_heading: true
+            heading_level: 3
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Tutorials:
+      - Checking one trajectory: tutorials/single-trajectory.md
+      - 'Worked example: three replicas of the radius of gyration': tutorials/worked-example.md
+  - How the checks work: quality-control.md
+  - Outputs: outputs.md
+  - Validation: validation.md
+  - API reference: api.md
+  - Citing MDCheck: citing.md
+  - Support and contributing: support.md
