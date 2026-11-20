@@ -303,7 +303,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         </div>
 
         <footer>
-            Generated automatically by <strong>MDCheck v1.2.0</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
+            Generated automatically by <strong>MDCheck v{{ version }}</strong> &bull; Scientific Simulation Quality & Convergence Toolkit &bull; Monreal-Hernández, 2026.
         </footer>
     </div>
 
@@ -351,7 +351,8 @@ def generate_html_report(
     rendered = template.render(
         report=report,
         methods_text=methods_text,
-        citation_bib=citation_bib
+        citation_bib=citation_bib,
+        version=__import__("mdcheck").__version__
     )
     
     with open(output_path, "w", encoding="utf-8") as f:

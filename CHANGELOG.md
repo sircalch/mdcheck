@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 (2026-11-20)
+
+### Fixed
+- **Author name in generated citations.** The BibTeX written to `citation.bib`, shown in the HTML report and printed by the command line read `Andre` (with a broken accent) instead of `Andrés`; the APA and BibTeX strings, the package `__author__` and the licence now read Andrés Monreal-Hernández.
+- **Stale version numbers.** The generated BibTeX, the methods paragraph and the HTML report footer stated a fixed older version (often 1.0.0); they now read the installed version.
+
 ## 1.2.0 (2026-11-19)
 
 ### Added
