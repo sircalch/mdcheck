@@ -192,16 +192,16 @@ def run_assess(args):
 
 def print_citation():
     bib = """@software{monreal2026mdcheck,
-  author = {Monreal-Hern\\'andez, Andre},
+  author = {Monreal-Hernández, Andrés},
   title = {{MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations}},
   year = {2026},
-  version = {1.0.0},
+  version = {""" + __version__ + """},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/mdcheck}
 }"""
     print("\nIf you use MDCheck in your publications, please cite:\n")
     print("APA Style:")
-    print("Monreal-Hernández, A. (2026). MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations (v1.0.0). Zenodo. https://github.com/sircalch/mdcheck\n")
+    print("Monreal-Hernández, A. (2026). MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations (v" + __version__ + "). Zenodo. https://github.com/sircalch/mdcheck\n")
     print("BibTeX:")
     print(bib)
     print()

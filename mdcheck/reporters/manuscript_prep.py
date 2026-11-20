@@ -2,6 +2,7 @@
 Generates manuscript Methods text, Supporting Information LaTeX, summary tables, and BibTeX citations.
 """
 
+from mdcheck import __version__
 from typing import Dict, Any
 import os
 import pandas as pd
@@ -79,7 +80,7 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
         
     methods_text = (
         f"Trajectory convergence, stationarity, and statistical independence were systematically assessed "
-        f"using MDCheck v1.2.0 (Monreal-Hernández, 2026). For all monitored observables ({obs_names}), the initial "
+        f"using MDCheck v{__version__} (Monreal-Hernández, 2026). For all monitored observables ({obs_names}), the initial "
         f"equilibration phase (up to t_eq = {max_teq:.2f} ns) was automatically detected and discarded by maximizing "
         f"the effective sample size N_eff of the production regime. Integrated autocorrelation times (tau_int) and "
         f"statistical inefficiency factors (g) were evaluated via self-consistent Madras-Sokal windowing, ensuring a minimum "
@@ -94,10 +95,10 @@ def generate_manuscript_assets(report: SimulationQualityReport, output_dir: str)
     # 3. BibTeX Citation File
     bib_path = os.path.join(output_dir, "citation.bib")
     bib_content = """@software{monreal2026mdcheck,
-  author = {Monreal-Hern\\'andez, Andre},
+  author = {Monreal-Hernández, Andrés},
   title = {{MDCheck: Automated Convergence, Statistical Inefficiency, and Reproducibility Assessment for Molecular Dynamics Simulations}},
   year = {2026},
-  version = {1.2.0},
+  version = {""" + __version__ + """},
   publisher = {Zenodo},
   url = {https://github.com/sircalch/mdcheck}
 }
